@@ -1,5 +1,5 @@
 
-path=r"C:\Users\Murat\Desktop\Emre\Python\Instabot_2.4\Analysis_of_People\ "
+path=r".\Instagram_Automation_Bot\Analysis_of_People\ "
 
 def write_list_for_new_user(user,followers,following,no_follow_back):
     from datetime import datetime

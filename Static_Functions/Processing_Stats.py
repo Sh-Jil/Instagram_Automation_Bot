@@ -1,6 +1,7 @@
 
 
 def followed_back(followers,following):
+    """Returns a list of people who have followed back."""
     f_back=[]
     for person in following:
         if person in followers:
@@ -8,6 +9,7 @@ def followed_back(followers,following):
     return f_back
 
 def no_follow_back(followers,following):
+    """Returns a list of users that have not followed back"""
     nof=[]
     for person in following:
         if person not in followers:

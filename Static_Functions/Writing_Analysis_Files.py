@@ -2,6 +2,7 @@
 path=r".\Instagram_Automation_Bot\Analysis_of_People\ "
 
 def write_list_for_new_user(user,followers,following,no_follow_back):
+    """Saves statistics for a user that has not been saved before onto local storage."""
     from datetime import datetime
     import os
     os.mkdir(user)
@@ -28,6 +29,8 @@ def write_list_for_new_user(user,followers,following,no_follow_back):
     folder.close()
 
 def write_list_for_old_user(user, followers, following, no_follow_back):
+    """Saves statistics onto local storage for an existing user. If the user has never been saved before, this function is called. 
+    Otherwise, 'write_list_for_new_user' is used."""
     from datetime import datetime
 
     cmonman = path

@@ -117,9 +117,4 @@ class instabot:
         notnow[0].click()
 
 
-    def check_action(self):
-        """This function makes sure that you have met all the requirements to execute an actions"""
-        if self.override == True or self.actionsdone <= self.limitperhour:
-            return True
-        else:
-            return False
+

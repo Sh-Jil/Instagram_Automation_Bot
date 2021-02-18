@@ -38,11 +38,12 @@ class instabot:
             self.usrnm=self.usrnm
 
     def wait_for_page(self):
+        """This function waits for the page to load."""
         page_main = self.browser.find_elements_by_css_selector("html")
         started=perf_counter()
 
-        while len(page_main) < 1 and perf_counter()-started<self.loop_time_out:
-            page_main = self.browser.find_elements_by_css_selector("html")
+        while len(page_main) < 1 and perf_counter()-started<self.loop_time_out: #wait
+            page_main = self.browser.find_elements_by_css_selector("html") #update to see if it has loaded
 
         sleep(self.added_sleep)
         if len(page_main)<1:
@@ -51,6 +52,8 @@ class instabot:
         else:
             return True
     def broken_link(self,wait_for=None):
+        """This function checks to see if the visited website is a broken link. Sometimes the bot will try to visit a user, but the user has closed that account.
+        In that case, in order to avoid an infinite loop, we first check to see if the site is valid."""
         self.wait_for_page()
         if wait_for==None:
             wait_for=self.loop_time_out
@@ -67,9 +70,8 @@ class instabot:
             return False
 
     def signin(self):
-        # the signin function also closes the "turn notifications on" window
-        """ ALL THE WHILE LOOPS ARE EXPLICIT WAITS
-        I WILL NEED TO ADD A TIMEOUT SOON IN ORDER TO AVOID INFINITE LOOPS """
+        """This function logs in to the account specified. The signin function also closes the 'turn notifications on' window"""
+
 
         from random import randint,uniform
         from selenium.webdriver.common.keys import Keys

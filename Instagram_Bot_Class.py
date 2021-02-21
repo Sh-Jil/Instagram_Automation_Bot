@@ -215,4 +215,5 @@ class instabot:
             return final
 
         except:
+            #If something goes wrong in the process, try the function again.
             return self.scrolldown(numpeople=numpeople,classname=classname)

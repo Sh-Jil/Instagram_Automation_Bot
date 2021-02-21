@@ -1,7 +1,7 @@
 from time import sleep, perf_counter
 from random import uniform
 class instabot:
-    """The __init__ function has been revised for InstaBot 2.2"""
+    """The instabot class has been revised for InstaBot 2.4"""
 
     def __init__(self, usrnm="", psw="", login=True, limitperhour=5):
         if login:

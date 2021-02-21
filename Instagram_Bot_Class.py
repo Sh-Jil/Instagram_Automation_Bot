@@ -188,6 +188,8 @@ class instabot:
 
             thingtodo = ActionChains(self.browser) #we need to create a separate action chains object due to the bugs
             # with the send_keys function
+            
+            #The tab key is pressed multiple times to make sure that the window is in focus.
             thingtodo.send_keys(Keys.TAB).perform()
             thingtodo.send_keys(Keys.TAB).perform()
             thingtodo.send_keys(Keys.TAB).perform()
@@ -201,11 +203,14 @@ class instabot:
 
 
             now = self.browser.find_elements_by_class_name(classname)
-            while len(now) <= numpeople - 4:
-                now = self.browser.find_elements_by_class_name(classname)
+            while len(now) <= numpeople - 4: #scrolling until all of the elements have loaded
+                now = self.browser.find_elements_by_class_name(classname) #updating the variable that stores the elements
                 thingtodo.send_keys(Keys.END).perform()
                 sleep(self.scrollsleep)
 
+                
+            
+            #converting every element into text:
             now = self.browser.find_elements_by_class_name(classname)
             final = []
             for i in now:

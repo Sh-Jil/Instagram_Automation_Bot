@@ -217,3 +217,24 @@ class instabot:
         except:
             #If something goes wrong in the process, try the function again.
             return self.scrolldown(numpeople=numpeople,classname=classname)
+
+    def follower_following_int(self, person):
+        """This function returns an array with two integers (the number of people following the person,
+        and the number of people that the person is following). [followernumber,followingnumber]."""
+
+
+        if self.check_action()==False:
+            return False
+
+        w="https://www.instagram.com/" + person + "/" #creating the url for person
+        if self.browser.current_url!=w:
+            self.browser.get(w)
+
+        if self.broken_link():
+            return False
+        sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+
+        stats = self.number_of_posts_followers_and_following(person)
+        followers = stats[1]
+        following = stats[2]
+        return [followers,following]

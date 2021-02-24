@@ -404,3 +404,76 @@ class instabot:
         print("Followed " + str(person) )
         return True
 
+
+    def unfollow(self, person):
+        """The 'unfollow' function unfollows a given person. """
+        from time import sleep
+        from random import randint
+
+        can_I=self.follow(person) #this function is enough to get you half the way. After this, all you need to do is
+        # confirm that you want to unfollow the person
+
+        if can_I==False:
+            return False
+
+        #Confirming that we want to unfollow:
+
+        buttons = self.browser.find_elements_by_class_name("aOOlW")
+
+        while len(buttons) < 1:
+            buttons = self.browser.find_elements_by_class_name("BY3EC")
+            sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+
+        #Here, we are just double checking to make sure everything is in order. A time out will be added to all while
+        # loops to make sure they don't last forever.
+        if len(buttons) > 1:
+            sleep(randint(1, 2))
+            buttons[0].click()
+
+            return True
+        else:
+            return False
+    def likeposts(self, person, howmany):
+        """Since I rarely use the post liking function, this function has NOT been revised for Instabot2.1 . It does not
+        count the amount of posts that have been liked."""
+
+        from time import sleep
+        from random import randint
+        from selenium.webdriver.common.keys import Keys
+        from selenium.webdriver.common.action_chains import ActionChains
+
+        thingtodo = ActionChains(self.browser) #we need to create a separate action chains object due to the bugs
+        w="https://www.instagram.com/" + person + "/"
+        if self.browser.current_url!=w:
+            self.browser.get(w)
+
+        if self.broken_link():
+            return False
+
+        sleep(randint(2, 5))
+
+        posts = self.browser.find_elements_by_class_name("_9AhH0")
+        # MAKING SURE THERE ARE ENOUGH POSTS SPECIFIED:
+        n=0
+        while len(posts) < howmany:
+            thingtodo.send_keys(Keys.PAGE_DOWN).perform()
+            posts = self.browser.find_elements_by_class_name("_9AhH0")
+            n+=1
+            if n%10==0:
+                from selenium.webdriver.common.action_chains import ActionChains
+
+                thingtodo = ActionChains(self.browser)  # we need to create a separate action chains object due to the bugs
+            sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+
+        posts[0].click()
+        sleep(randint(1, 3))
+
+        for i in range(0, howmany):
+            sleep(randint(1, 4))
+            stuff = self.browser.find_elements_by_class_name("_8-yf5")
+            while len(stuff) < 8:
+                stuff = self.browser.find_elements_by_class_name("_8-yf5")
+            stuff[7].click()
+            sleep(randint(1, 4))
+            rightarrow = self.browser.find_element_by_class_name("coreSpritedRightPaginationArrow")
+            rightarrow.click()

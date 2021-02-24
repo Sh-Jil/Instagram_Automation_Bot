@@ -243,3 +243,164 @@ class instabot:
         followers = stats[1]
         following = stats[2]
         return [followers,following]
+    
+    
+        def getstat(self, person, followersorfollowing,how_many_people=None):
+
+        """This function will return an array of people."""
+        w = "https://www.instagram.com/" + person
+        self.browser.get(w)
+        from time import sleep
+
+        if how_many_people==None:
+
+            followers_and_following=self.follower_following_int(person=person)
+            followers = followers_and_following[0]
+            following = followers_and_following[1]
+        else:
+            followers=how_many_people
+            following=how_many_people
+
+        # The buttons variable stores the buttons in the form : [posts, followers, following]
+        # The while loop waits for the 3 buttons to load
+        buttons = self.browser.find_elements_by_class_name("-nal3")
+        while len(buttons) < 3:
+            buttons = self.browser.find_elements_by_class_name("-nal3")
+
+        sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+
+        if followersorfollowing == "followers":
+            buttons[1].click()
+
+            return self.scrolldown(followers, "FPmhX")
+
+        elif followersorfollowing == "following":
+            buttons[2].click()
+
+            return self.scrolldown(following, "FPmhX")
+
+        else:
+            return False
+
+    def findwhohasnotfollowedback(self, who, write_to_document=True, followers=None, following=None):
+        """This function finds the list of people who have not followed back for any given person."""
+        import os
+        from Static_Functions import Writing_Analysis_Files
+
+        if following is None:
+            following = []
+        if followers is None:
+            followers = []
+
+        if followers==[]:
+            followers = self.getstat(who, "followers")
+            self.browser.get("https://www.instagram.com/" + who)
+        if followers == False:
+            return False
+
+        if following==[]:
+             following = self.getstat(who, "following")
+        if following == False:
+            return False
+
+        no_follow_back = []
+
+        for i in following:
+            if i not in followers:
+                no_follow_back.append(i)
+        original=os.getcwd()
+
+        os.chdir(Writing_Analysis_Files.path)
+        peopledone = os.listdir(os.getcwd())
+        isthere = False
+        for i in peopledone:
+
+            if i == who:
+                isthere = True
+                break
+        update=[]
+        for i in followers:
+            if i not in [""," ","  ","   "]:
+                update.append(i)
+        followers = update
+
+        new_update=[]
+        for i in following:
+            if i not in [""," ","  ","   "]:
+                new_update.append(i)
+        following=new_update
+
+        os.chdir(original)
+        if write_to_document:
+            if not isthere:
+                Writing_Analysis_Files.write_list_for_new_user(who, followers, following, no_follow_back)
+
+            else:
+                Writing_Analysis_Files.write_list_for_old_user(who, followers, following, no_follow_back)
+
+        print(who,followers,following,no_follow_back)
+        return no_follow_back
+
+    def filter_celebrities(self,array_of_people,celeb_follower_limit=50000):
+        update=[]
+        for person in array_of_people:
+            if self.follower_following_int(person)[0]<=celeb_follower_limit:
+                update.append(person)
+
+        return update
+
+    @staticmethod
+    def processperson(person):
+        from Static_Functions import Processing_Stats
+        return Processing_Stats.who_has_unfollowed(person)
+
+    def follow(self, person):
+        """The 'follow' function follows a person. """
+        from time import perf_counter
+        self.browser.get("https://www.instagram.com/" + person)
+        self.wait_for_page()
+        if self.broken_link():
+            return False
+        buttons = self.browser.find_elements_by_class_name("sqdOP")  # This is an array that will store only one html
+        # element. We are storing it in an array so that we wait until the array is non-empty.
+
+        if len(buttons) > 0:
+            if "follow"!=buttons[0].text.lower():
+                return False
+        start=perf_counter()
+        now=perf_counter()
+        buttons = self.browser.find_elements_by_class_name("_5f5mN") #the buttons
+        buttons_alternative=self.browser.find_elements_by_class_name("y3zKF") #The buttons if the account is private
+
+        while len(buttons) < 1 and len(buttons_alternative)<1 and now-start<self.loop_time_out:
+            buttons = self.browser.find_elements_by_class_name("_5f5mN")
+            buttons_alternative = self.browser.find_elements_by_class_name("y3zKF")
+            sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+            now = perf_counter()
+
+        sleep(uniform(self.added_sleep, self.added_sleep + self.interval))
+        if len(buttons)<1:
+            buttons=buttons_alternative
+
+        if "follow" not in buttons[0].text.lower(): #making sure the buttons is the follow button
+            return False
+        if self.check_action()==False:
+            return False
+
+
+        # if now-start>=self.loop_time_out:
+        #     if self.broken_link():
+        #         return False
+        #     elif self.broken_link(): #checking again
+        #         return False
+        #     else:
+        #         return self.follow(person=person)
+
+
+        buttons[0].click()
+        self.browser.implicitly_wait(1)
+        self.actionsdone += 1
+
+        print("Followed " + str(person) )
+        return True
+
